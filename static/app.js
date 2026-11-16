@@ -74,9 +74,8 @@ function kapitalAwal(teks) {
   });
 }
 
-const LABEL_STATUS = { berlaku: 'Berlaku', segera: 'Segera habis', habis: 'Habis', tidak_diketahui: 'Belum diketahui' };
-const LABEL_HASIL = { cocok: 'Cocok', ganda: 'Nama ganda', mirip: 'Tidak persis', tidak_ada: 'Tidak ditemukan', gagal: 'Gagal dicek' };
-const SUMBER = { cekskk: 'cekskk.com', ceksbu: 'ceksbu.com', lokal: 'database lokal', lokal_usang: 'database lokal' };
+const LABEL_STATUS = { berlaku: 'Berlaku', segera: 'Segera Habis', habis: 'Habis', tidak_diketahui: 'Belum Diketahui' };
+const LABEL_HASIL = { cocok: 'Cocok', ganda: 'Nama Ganda', mirip: 'Tidak Persis', tidak_ada: 'Tidak Ditemukan', gagal: 'Gagal Dicek' };
 
 const IKON_LUAR = raw('<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3h7v7M13 3L5 11" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>');
 const IKON_ULANG = raw('<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8a5 5 0 1 1-1.5-3.6M13 2.5v3h-3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>');
@@ -128,12 +127,12 @@ const bacaSesi = (k) => { try { return sessionStorage.getItem(k); } catch { retu
    ================================================================ */
 
 const MODE = {
-  tk: { label: 'Nama tenaga kerja', placeholder: 'Nama lengkap, tanpa gelar',
+  tk: { label: 'Nama Tenaga Kerja', placeholder: 'Nama Lengkap tanpa Gelar',
         hint: 'Sumber hanya menyediakan pencarian lewat nama. Tulis sesuai KTP, tanpa gelar.',
-        cari: '/api/tk/cari', profil: (r) => `/api/tk/profil/${r}`, sumber: 'cekskk.com' },
-  bu: { label: 'Nama badan usaha atau NIB', placeholder: 'Contoh: Wijaya Karya',
+        cari: '/api/tk/cari', profil: (r) => `/api/tk/profil/${r}` },
+  bu: { label: 'Nama Badan Usaha atau NIB', placeholder: 'Contoh: Wijaya Karya',
         hint: 'Bentuk usaha (PT, CV) boleh ditulis atau tidak.',
-        cari: '/api/bu/cari', profil: (r) => `/api/bu/profil/${r}`, sumber: 'ceksbu.com' },
+        cari: '/api/bu/cari', profil: (r) => `/api/bu/profil/${r}` },
 };
 
 const state = { hasil: { tk: null, bu: null }, ctrl: null, dariHasil: false };
@@ -197,10 +196,10 @@ function tampilAwal(mode) {
     <div class="legenda rise">
       <div><span class="cap cap--kecil cap--berlaku">Berlaku</span>
         <h3>Masih Berlaku</h3><p>Masa berlaku ${benda} lebih dari sembilan puluh hari lagi.</p></div>
-      <div><span class="cap cap--kecil cap--segera">Segera habis</span>
+      <div><span class="cap cap--kecil cap--segera">Segera Habis</span>
         <h3>Habis dalam Sembilan Puluh Hari</h3><p>Perlu diperhatikan bila pekerjaan masih berjalan melewati tanggal itu.</p></div>
       <div><span class="cap cap--kecil cap--habis">Habis</span>
-        <h3>Sudah Lewat Masa Berlaku</h3><p>Status dihitung dari tanggal berlaku s/d, bukan dari label sumber.</p></div>
+        <h3>Sudah Lewat Masa Berlaku</h3><p>Status dihitung dari tanggal berlaku, bukan dari label sumber.</p></div>
     </div>`.s;
 }
 
@@ -216,7 +215,7 @@ function tampilMuat(teks) {
 function tampilGagal(pesan, ulang) {
   $('#panel').innerHTML = html`<div class="kosong rise">
     <p class="kosong__judul">${pesan}</p>
-    ${ulang ? html`<p><button class="btn" type="button" data-aksi="ulang">${IKON_ULANG} Coba lagi</button></p>` : ''}
+    ${ulang ? html`<p><button class="btn" type="button" data-aksi="ulang">${IKON_ULANG} Coba Lagi</button></p>` : ''}
   </div>`.s;
 }
 
@@ -227,7 +226,7 @@ async function cari(mode, q) {
   state.ctrl?.abort();
   const ctrl = (state.ctrl = new AbortController());
   document.title = `${q} · SKA Checker`;
-  tampilMuat(`Mencari “${q}” di ${MODE[mode].sumber}…`);
+  tampilMuat(`Mencari “${q}”…`);
   let res;
   try {
     res = await api(`${MODE[mode].cari}?q=${encodeURIComponent(q)}`, { signal: ctrl.signal });
@@ -246,7 +245,7 @@ function tampilHasil(mode, d) {
       <p>${mode === 'tk'
         ? 'Coba tulis nama lengkap sesuai KTP tanpa gelar, atau sebagian nama saja. Bila tetap kosong, cek langsung di situs LPJK; tenaga kerja yang baru terdaftar bisa belum tercatat di sumber.'
         : 'Coba tanpa bentuk usaha (PT, CV), atau dengan sebagian nama saja. Bila tetap kosong, cek langsung di situs LPJK.'}</p>
-      <p><a class="btn" href="${mode === 'tk' ? 'https://lpjk.pu.go.id/pencarian-tkk-index' : 'https://lpjk.pu.go.id/pencarian-bu-index'}" target="_blank" rel="noopener">Buka pencarian LPJK ${IKON_LUAR}</a></p>
+      <p><a class="btn" href="${mode === 'tk' ? 'https://lpjk.pu.go.id/pencarian-tkk-index' : 'https://lpjk.pu.go.id/pencarian-bu-index'}" target="_blank" rel="noopener">Buka Pencarian LPJK ${IKON_LUAR}</a></p>
     </div>`.s;
     return;
   }
@@ -257,7 +256,7 @@ function tampilHasil(mode, d) {
     ${d.terpotong ? html`<p class="note note--info">Sumber hanya menampilkan sebagian hasil. Perjelas dengan nama lengkap bila orang yang dicari tidak ada di daftar.</p>` : ''}
     <div class="hasil__head rise">
       <h2 class="hasil__judul">${jumlah} untuk <em>“${q}”</em></h2>
-      <span class="hasil__meta">Sumber: ${SUMBER[d.sumber] || d.sumber}</span>
+      ${d.sumber === 'lokal' ? html`<span class="hasil__meta">Sumber: Database Lokal</span>` : ''}
     </div>
     <div class="tabel-wrap rise">
       <table class="tabel">
@@ -289,7 +288,7 @@ function npwpFormat(n) {
 async function bukaProfil(mode, ref, segarkan = false) {
   state.ctrl?.abort();
   const ctrl = (state.ctrl = new AbortController());
-  tampilMuat(segarkan ? `Mengambil ulang dari ${MODE[mode].sumber}…` : 'Memuat profil…');
+  tampilMuat(segarkan ? 'Mengambil ulang data…' : 'Memuat profil…');
   let res;
   try {
     res = await api(MODE[mode].profil(encodeURIComponent(ref)) + (segarkan ? '?segarkan=1' : ''), { signal: ctrl.signal });
@@ -317,7 +316,7 @@ function blokMasa(c) {
   }
   return html`<div class="masa">
     <div class="masa__jalur"><span class="masa__isi" data-p="${p.toFixed(2)}"></span>${tick != null ? html`<span class="masa__kini" data-x="${tick.toFixed(2)}" title="Hari ini"></span>` : ''}</div>
-    <div class="masa__label"><span>${awal ? html`Terbit <b>${tgl(c.terbit)}</b>` : ''}</span><span>Berlaku s/d <b>${tgl(c.berlaku_sampai)}</b></span></div>
+    <div class="masa__label"><span>${awal ? html`Terbit <b>${tgl(c.terbit)}</b>` : ''}</span><span>Berlaku s.d. <b>${tgl(c.berlaku_sampai)}</b></span></div>
   </div>`;
 }
 
@@ -331,7 +330,7 @@ function teksSisa(c) {
 function blokAngka(r, total) {
   return html`<dl class="angka">
     <div><dt><span class="titik titik--berlaku"></span>Berlaku</dt><dd>${r.berlaku}</dd></div>
-    <div><dt><span class="titik titik--segera"></span>Segera habis</dt><dd>${r.segera}</dd></div>
+    <div><dt><span class="titik titik--segera"></span>Segera Habis</dt><dd>${r.segera}</dd></div>
     <div><dt><span class="titik titik--habis"></span>Habis</dt><dd>${r.habis}</dd></div>
     <div><dt><span class="titik"></span>Total</dt><dd>${total}</dd></div>
   </dl>`;
@@ -344,7 +343,7 @@ function blokSaring(r) {
 }
 
 function blokKembali() {
-  return html`<button type="button" class="lembar__kembali" data-aksi="kembali">← ${state.dariHasil ? 'Kembali ke hasil pencarian' : 'Pencarian baru'}</button>`;
+  return html`<button type="button" class="lembar__kembali" data-aksi="kembali">← ${state.dariHasil ? 'Kembali ke Hasil Pencarian' : 'Pencarian Baru'}</button>`;
 }
 
 function blokPeringatan(d, lengkap = true) {
@@ -353,7 +352,7 @@ function blokPeringatan(d, lengkap = true) {
 }
 
 function blokCatatan(d) {
-  return html`<p class="catatan-kaki">Sumber: <a href="${d.url_sumber}" target="_blank" rel="noopener">${new URL(d.url_sumber).host}</a>${d.sumber.startsWith('lokal') ? ' (salinan di database lokal)' : ''}, diperbarui ${waktu(d.diperbarui) || '–'}. Agregator ini bukan sumber resmi; untuk bukti audit, cocokkan di situs LPJK.</p>`;
+  return html`<p class="catatan-kaki">Diperbarui ${waktu(d.diperbarui) || '–'}${d.sumber.startsWith('lokal') ? ' (salinan database lokal)' : ''}. Data ini bukan dari sumber resmi; untuk bukti audit, cocokkan di situs LPJK.</p>`;
 }
 
 function tampilTK(d) {
@@ -367,19 +366,18 @@ function tampilTK(d) {
           <p class="eyebrow">Tenaga Kerja Konstruksi</p>
           <h2 class="lembar__nama">${d.nama}</h2>
           <p class="lembar__sub">${kapitalAwal(d.lokasi) || 'Lokasi tidak tercatat'}</p>
-          <p class="lembar__ref">ID cekskk <span class="mono">${d.id}</span></p>
+          <p class="lembar__ref">ID Profil <span class="mono">${d.id}</span></p>
         </div>
         <div class="aksi">
           <button class="btn btn--ink" type="button" data-aksi="lpjk" data-nama="${d.nama}" data-url="${d.url_resmi}">Verifikasi di LPJK ${IKON_LUAR}</button>
           <a class="btn" href="/api/tk/profil/${d.id}.xlsx">${IKON_UNDUH} Excel</a>
           <button class="btn" type="button" data-aksi="segarkan" data-ref="tk/${d.id}">${IKON_ULANG} Perbarui</button>
-          <a class="btn" href="${d.url_sumber}" target="_blank" rel="noopener">Sumber ${IKON_LUAR}</a>
         </div>
       </header>
       ${blokAngka(r, r.total)}
       <dl class="fakta">
         <dt>Pendidikan</dt><dd>${d.pendidikan || '–'}</dd>
-        ${d.total_sumber != null && d.total_sumber !== r.total ? html`<dt>Catatan sumber</dt><dd>Sumber mencatat ${d.total_sumber} sertifikat, ${r.total} yang bisa dibaca.</dd>` : ''}
+        ${d.total_sumber != null && d.total_sumber !== r.total ? html`<dt>Catatan Sumber</dt><dd>Sumber mencatat ${d.total_sumber} sertifikat, ${r.total} yang bisa dibaca.</dd>` : ''}
       </dl>
       <div class="daftar__head">
         <h3 class="daftar__judul">Sertifikat</h3>
@@ -420,7 +418,6 @@ function tampilBU(d) {
           <button class="btn btn--ink" type="button" data-aksi="lpjk" data-nama="${d.nama}" data-url="${d.url_resmi}">Verifikasi di LPJK ${IKON_LUAR}</button>
           <a class="btn" href="/api/bu/profil/${d.npwp}.xlsx">${IKON_UNDUH} Excel</a>
           <button class="btn" type="button" data-aksi="segarkan" data-ref="bu/${d.npwp}">${IKON_ULANG} Perbarui</button>
-          <a class="btn" href="${d.url_sumber}" target="_blank" rel="noopener">Sumber ${IKON_LUAR}</a>
         </div>
       </header>
       ${blokAngka(r, r.total)}
@@ -525,7 +522,7 @@ async function muatStatistik() {
   const res = await api('/api/statistik');
   if (!res.ok) return;
   const s = res.data;
-  $('#dbStat').innerHTML = html`<span class="lbl">Database lokal · </span><b>${fmtAngka.format(s.tenaga_kerja)}</b> tenaga kerja · <b>${fmtAngka.format(s.badan_usaha)}</b> badan usaha`.s;
+  $('#dbStat').innerHTML = html`<span class="lbl">Database Lokal · </span><b>${fmtAngka.format(s.tenaga_kerja)}</b> Tenaga Kerja · <b>${fmtAngka.format(s.badan_usaha)}</b> Badan Usaha`.s;
   $('#dbStat').title = 'Jumlah profil yang sudah tersimpan di database lokal';
 }
 
@@ -537,7 +534,7 @@ const massal = { id: null, dari: 0, timer: null, jenis: 'tk' };
 
 function hitungTeks() {
   const n = $('#teks').value.split('\n').filter((x) => x.trim().length >= 3).length;
-  $('#teksHitung').textContent = `${fmtAngka.format(n)} nama${n > 200 ? ' (melebihi batas 200)' : ''}`;
+  $('#teksHitung').textContent = `${fmtAngka.format(n)} Nama${n > 200 ? ' (melebihi batas 200)' : ''}`;
   $('#teksHitung').classList.toggle('hint--salah', n > 200);
 }
 $('#teks').addEventListener('input', hitungTeks);
@@ -546,7 +543,7 @@ const drop = $('#drop');
 $('#file').addEventListener('change', () => {
   const f = $('#file').files[0];
   drop.classList.toggle('is-file', Boolean(f));
-  $('.drop__judul', drop).textContent = f ? f.name : 'Atau unggah file';
+  $('.drop__judul', drop).textContent = f ? f.name : 'Atau Unggah File';
   $('#dropSub').textContent = f
     ? 'File ini yang akan dipakai; isi kotak teks diabaikan. Pilih ulang untuk mengganti.'
     : '.xlsx, .csv, atau .txt, maks. 2 MB. Teks pertama di tiap baris dibaca sebagai nama; baris judul dilewati.';
@@ -633,7 +630,7 @@ async function pantauJob() {
   $('#jalanSelesai').textContent = d.selesai;
   $('#garisIsi').style.width = `${d.total ? (d.selesai / d.total) * 100 : 0}%`;
   $('#tally').innerHTML = Object.keys(LABEL_HASIL).filter((k) => d.hitung[k])
-    .map((k) => html`<li><b>${d.hitung[k]}</b>${LABEL_HASIL[k].toLowerCase()}</li>`.s).join('');
+    .map((k) => html`<li>${LABEL_HASIL[k]} <b>${d.hitung[k]}</b></li>`.s).join('');
 
   const selesai = d.status === 'selesai' || d.status === 'dihentikan';
   if (selesai) {

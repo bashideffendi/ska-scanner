@@ -15,7 +15,7 @@
 <script src="/static/app.js?v={{ v }}" defer></script>
 </head>
 <body data-awal="1">
-<a class="skip" href="#main">Lompat ke konten</a>
+<a class="skip" href="#main">Lompat ke Konten</a>
 
 <header class="top">
   <div class="wrap top__row">
@@ -42,10 +42,10 @@
 
   <section id="viewCari" class="view">
     <form id="formCari" class="search" role="search" autocomplete="off" novalidate>
-      <label for="q" class="search__label" id="qLabel">Nama tenaga kerja</label>
+      <label for="q" class="search__label" id="qLabel">Nama Tenaga Kerja</label>
       <div class="search__field">
         <input id="q" name="q" type="search" minlength="3" maxlength="80" spellcheck="false"
-               placeholder="Nama lengkap, tanpa gelar" aria-describedby="qHint">
+               placeholder="Nama Lengkap tanpa Gelar" aria-describedby="qHint">
         <kbd class="search__kbd mono" aria-hidden="true" title="Tekan / untuk mengetik">/</kbd>
         <button class="btn btn--ink" type="submit">Cari</button>
       </div>
@@ -58,19 +58,19 @@
     <form id="formMassal" class="massal" novalidate>
       <div class="massal__kiri">
         <fieldset class="pilih">
-          <legend class="label">Yang dicek</legend>
-          <label class="pilih__opsi"><input type="radio" name="jenis" value="tk" checked> <span>Tenaga kerja</span></label>
-          <label class="pilih__opsi"><input type="radio" name="jenis" value="bu"> <span>Badan usaha</span></label>
+          <legend class="label">Yang Dicek</legend>
+          <label class="pilih__opsi"><input type="radio" name="jenis" value="tk" checked> <span>Tenaga Kerja</span></label>
+          <label class="pilih__opsi"><input type="radio" name="jenis" value="bu"> <span>Badan Usaha</span></label>
         </fieldset>
-        <label for="teks" class="label">Daftar nama, satu per baris</label>
+        <label for="teks" class="label">Daftar Nama, Satu per Baris</label>
         <textarea id="teks" name="teks" class="ledger" rows="11" spellcheck="false"
-                  placeholder="Satu nama per baris"></textarea>
-        <p class="hint" id="teksHitung">0 nama</p>
+                  placeholder="Satu Nama per Baris"></textarea>
+        <p class="hint" id="teksHitung">0 Nama</p>
       </div>
       <div class="massal__kanan">
         <label class="drop" id="drop">
           <input type="file" id="file" name="file" accept=".xlsx,.csv,.txt">
-          <span class="drop__judul">Atau unggah file</span>
+          <span class="drop__judul">Atau Unggah File</span>
           <span class="drop__sub" id="dropSub">.xlsx, .csv, atau .txt, maks. 2 MB. Teks pertama di tiap baris dibaca sebagai nama; baris judul dilewati.</span>
         </label>
         <ul class="catatan">
@@ -78,7 +78,7 @@
           <li>Hanya nama yang persis sama yang dicocokkan otomatis. Nama ganda dan nama yang tidak persis dicantumkan sebagai kandidat untuk dicek manual.</li>
           <li>Perkiraan waktu sekitar tiga detik per nama.</li>
         </ul>
-        <button class="btn btn--ink btn--lebar" type="submit" id="btnMulai">Mulai cek</button>
+        <button class="btn btn--ink btn--lebar" type="submit" id="btnMulai">Mulai Cek</button>
         <p class="hint hint--salah" id="massalError" role="alert" hidden></p>
       </div>
     </form>
@@ -91,8 +91,8 @@
         </div>
         <div class="jalan__aksi">
           <button class="btn" type="button" id="btnStop">Hentikan</button>
-          <a class="btn btn--ink" id="btnUnduh" href="#" hidden>Unduh hasil .xlsx</a>
-          <button class="btn btn--teks" type="button" id="btnBaru" hidden>Cek daftar lain</button>
+          <a class="btn btn--ink" id="btnUnduh" href="#" hidden>Unduh Hasil (.xlsx)</a>
+          <button class="btn btn--teks" type="button" id="btnBaru" hidden>Cek Daftar Lain</button>
         </div>
       </div>
       <div class="garis" aria-hidden="true"><span id="garisIsi"></span></div>
@@ -110,7 +110,7 @@
 
 <footer class="foot">
   <div class="wrap foot__row">
-    <p>Data diambil dari <a href="https://cekskk.com" target="_blank" rel="noopener">cekskk.com</a> dan <a href="https://ceksbu.com" target="_blank" rel="noopener">ceksbu.com</a>, agregator data LPJK. Keduanya bukan sumber resmi; untuk bukti audit, cocokkan di <a href="https://lpjk.pu.go.id/" target="_blank" rel="noopener">lpjk.pu.go.id</a>.</p>
+    <p>Data diambil dari agregator data LPJK, bukan dari sumber resmi. Untuk bukti audit, cocokkan di <a href="https://lpjk.pu.go.id/" target="_blank" rel="noopener">situs resmi LPJK</a>.</p>
     <p class="foot__by">Bashid Effendi</p>
   </div>
 </footer>

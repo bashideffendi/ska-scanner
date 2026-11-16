@@ -192,7 +192,6 @@ def susun_tk(p, sumber, peringatan=None):
         'diperbarui': p.get('diperbarui'),
         'sumber': sumber,
         'peringatan': peringatan,
-        'url_sumber': scraper.tk_url(p['id']),
         'url_resmi': scraper.LPJK_TKK,
     }
 
@@ -210,7 +209,6 @@ def susun_bu(b, sumber, peringatan=None):
         'diperbarui': b.get('diperbarui'),
         'sumber': sumber,
         'peringatan': peringatan,
-        'url_sumber': scraper.bu_url(b['npwp'], b.get('path')),
         'url_resmi': scraper.LPJK_BU,
     }
 
@@ -273,7 +271,7 @@ def api_tk_cari():
                             'peringatan': 'Sumber sedang tidak bisa dijangkau. Hasil di bawah dari database lokal.'})
         return _source_error(e)
     db.simpan_tk_ringkas(r['hasil'])
-    payload = {**r, 'q': q, 'sumber': 'cekskk'}
+    payload = {**r, 'q': q, 'sumber': 'agregator'}
     cache_set(key, payload)
     return jsonify(payload)
 
@@ -302,7 +300,7 @@ def api_tk_profil(tk_id):
         return jsonify({'error': 'Profil tidak ditemukan di sumber.'}), 404
     p['diperbarui'] = scraper.sekarang_iso()
     db.simpan_tk(p)
-    return jsonify(susun_tk(p, 'cekskk'))
+    return jsonify(susun_tk(p, 'agregator'))
 
 
 # ------------------------------------------------------------------
@@ -330,7 +328,7 @@ def api_bu_cari():
         return _source_error(e)
     db.simpan_bu_ringkas(r['hasil'])
     hasil = [{k: h[k] for k in ('npwp', 'nama', 'lokasi')} for h in r['hasil']]
-    payload = {'hasil': hasil, 'total': r['total'], 'terpotong': r['terpotong'], 'q': q, 'sumber': 'ceksbu'}
+    payload = {'hasil': hasil, 'total': r['total'], 'terpotong': r['terpotong'], 'q': q, 'sumber': 'agregator'}
     cache_set(key, payload)
     return jsonify(payload)
 
@@ -359,7 +357,7 @@ def api_bu_profil(npwp):
     b['diperbarui'] = scraper.sekarang_iso()
     b['lokasi'] = (row or {}).get('lokasi', '')
     db.simpan_bu(b)
-    return jsonify(susun_bu(b, 'ceksbu'))
+    return jsonify(susun_bu(b, 'agregator'))
 
 
 # ------------------------------------------------------------------
@@ -380,8 +378,8 @@ def _tgl(iso):
         return None
 
 
-LABEL_STATUS = {'berlaku': 'Berlaku', 'segera': 'Segera habis', 'habis': 'Habis',
-                'tidak_diketahui': 'Tidak diketahui'}
+LABEL_STATUS = {'berlaku': 'Berlaku', 'segera': 'Segera Habis', 'habis': 'Habis',
+                'tidak_diketahui': 'Tidak Diketahui'}
 
 
 class Buku:
@@ -448,11 +446,11 @@ def _slug(s):
     return re.sub(r'[^A-Za-z0-9]+', '_', s or '').strip('_')[:60] or 'data'
 
 
-CATATAN_SUMBER = ('Data dari agregator (cekskk.com / ceksbu.com) yang bersumber dari LPJK. '
+CATATAN_SUMBER = ('Data diambil dari agregator data LPJK, bukan dari sumber resmi. '
                   'Untuk bukti audit, cocokkan di situs resmi LPJK.')
 
 KOLOM_SERT = ['No', 'Jenis', 'Kode', 'Jabatan Kerja', 'Jenjang', 'Penerbit (LSP)', 'Asosiasi',
-              'Terbit', 'Berlaku s/d', 'Status', 'Sisa Hari']
+              'Terbit', 'Berlaku s.d.', 'Status', 'Sisa Hari']
 LEBAR_SERT = [5, 8, 8, 46, 9, 32, 14, 12, 12, 14, 10]
 
 
@@ -473,7 +471,7 @@ def api_tk_xlsx(tk_id):
         ('Nama', d['nama']), ('Lokasi', d['lokasi']), ('Pendidikan', d['pendidikan']),
         ('Sertifikat Berlaku', d['ringkasan']['berlaku'] + d['ringkasan']['segera']),
         ('Sertifikat Habis', d['ringkasan']['habis']),
-        ('Data Diperbarui', d['diperbarui']), ('Halaman Sumber', d['url_sumber']),
+        ('Data Diperbarui', d['diperbarui']),
         ('Verifikasi Resmi', d['url_resmi']), ('Catatan', CATATAN_SUMBER)])
     bk.tabel('Sertifikat', KOLOM_SERT, _baris_sert(d['sertifikat']), LEBAR_SERT, kolom_status=10)
     return bk.kirim(f"SKK_{_slug(d['nama'])}.xlsx")
@@ -490,9 +488,9 @@ def api_bu_xlsx(npwp):
         ('Nama', d['nama']), ('Alamat', d['alamat']), ('NPWP', d['npwp_tampil'] or d['npwp']),
         ('SBU Berlaku', d['ringkasan']['berlaku'] + d['ringkasan']['segera']),
         ('SBU Habis', d['ringkasan']['habis']), ('Data Diperbarui', d['diperbarui']),
-        ('Halaman Sumber', d['url_sumber']), ('Verifikasi Resmi', d['url_resmi']),
+        ('Verifikasi Resmi', d['url_resmi']),
         ('Catatan', CATATAN_SUMBER)])
-    bk.tabel('SBU', ['No', 'Kode', 'Sub Bidang', 'Penerbit (LSBU)', 'Berlaku s/d', 'Status', 'Sisa Hari'],
+    bk.tabel('SBU', ['No', 'Kode', 'Sub Bidang', 'Penerbit (LSBU)', 'Berlaku s.d.', 'Status', 'Sisa Hari'],
              [[i, s.get('kode'), s.get('sub_bidang'), s.get('penerbit'), _tgl(s.get('berlaku_sampai')),
                LABEL_STATUS[s['status']], s.get('sisa_hari')] for i, s in enumerate(d['sbu'], 1)],
              [5, 9, 52, 36, 12, 14, 10], kolom_status=6)
@@ -605,7 +603,7 @@ def _proses_massal(job):
                             db.simpan_tk(p)
                             row = p
                     if row:
-                        baris['profil'] = susun_tk(row, 'cekskk')
+                        baris['profil'] = susun_tk(row, 'agregator')
             else:
                 r = scraper.search_bu(nama)
                 db.simpan_bu_ringkas(r['hasil'])
@@ -622,7 +620,7 @@ def _proses_massal(job):
                             db.simpan_bu(b)
                             row = b
                     if row:
-                        baris['profil'] = susun_bu(row, 'ceksbu')
+                        baris['profil'] = susun_bu(row, 'agregator')
             gagal_beruntun = 0
         except SourceBlocked as e:
             log.warning('massal %s dihentikan: %s', job['id'], e)
@@ -718,8 +716,8 @@ def api_massal_hentikan(job_id):
     return jsonify({'ok': True})
 
 
-LABEL_HASIL = {'cocok': 'Cocok', 'ganda': 'Nama ganda', 'mirip': 'Tidak persis',
-               'tidak_ada': 'Tidak ditemukan', 'gagal': 'Gagal dicek'}
+LABEL_HASIL = {'cocok': 'Cocok', 'ganda': 'Nama Ganda', 'mirip': 'Tidak Persis',
+               'tidak_ada': 'Tidak Ditemukan', 'gagal': 'Gagal Dicek'}
 
 
 @app.route('/api/massal/<job_id>.xlsx')
@@ -738,7 +736,7 @@ def api_massal_xlsx(job_id):
                         p.get('lokasi') or p.get('alamat'),
                         (r.get('berlaku', 0) + r.get('segera', 0)) if p else None,
                         r.get('segera') if p else None, r.get('habis') if p else None,
-                        kandidat or None, p.get('url_sumber')])
+                        kandidat or None])
         items = p.get('sertifikat' if tk else 'sbu') or []
         for c in items:
             if tk:
@@ -749,14 +747,14 @@ def api_massal_xlsx(job_id):
                 detail.append([b['no'], b['input'], p['nama'], c.get('kode'), c.get('sub_bidang'),
                                c.get('penerbit'), _tgl(c.get('berlaku_sampai')), LABEL_STATUS[c['status']]])
     bk.tabel('Ringkasan', ['No', 'Input', 'Hasil Pencocokan', 'Nama di Sumber', 'Lokasi',
-                           'Berlaku', 'Segera Habis', 'Habis', 'Kandidat (Perlu Dicek Manual)', 'Halaman Sumber'],
-             ringkas, [5, 30, 16, 32, 34, 9, 12, 8, 50, 40])
+                           'Berlaku', 'Segera Habis', 'Habis', 'Kandidat (Perlu Dicek Manual)'],
+             ringkas, [5, 30, 16, 32, 34, 9, 12, 8, 50])
     if tk:
         bk.tabel('Sertifikat', ['No', 'Input', 'Nama', 'Jenis', 'Kode', 'Jabatan Kerja', 'Jenjang',
-                                'Penerbit (LSP)', 'Terbit', 'Berlaku s/d', 'Status'],
+                                'Penerbit (LSP)', 'Terbit', 'Berlaku s.d.', 'Status'],
                  detail, [5, 26, 28, 7, 8, 44, 9, 30, 12, 12, 14], kolom_status=11)
     else:
-        bk.tabel('SBU', ['No', 'Input', 'Nama', 'Kode', 'Sub Bidang', 'Penerbit (LSBU)', 'Berlaku s/d', 'Status'],
+        bk.tabel('SBU', ['No', 'Input', 'Nama', 'Kode', 'Sub Bidang', 'Penerbit (LSBU)', 'Berlaku s.d.', 'Status'],
                  detail, [5, 28, 34, 8, 48, 34, 12, 14], kolom_status=8)
     bk.kv('Catatan', [('Dibuat', datetime.now().astimezone().isoformat(timespec='seconds')),
                       ('Jumlah Input', len(job['input'])), ('Status', job['status']),
