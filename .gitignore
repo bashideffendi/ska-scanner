@@ -1,7 +1,15 @@
 __pycache__/
 *.pyc
+.venv/
 cache/
 debug/
 chrome-profile/
+uploads/
+results/
+data/
+*.db
+*.db-wal
+*.db-shm
 .env
 *.egg-info/
+.claude/
